@@ -43,7 +43,6 @@ public abstract class TwoDPlayerController : MonoBehaviour
                 jumpkey = true;
                 currentjumpforce = jumpforceValue;
                 rigidbody.AddForce(new Vector2(0f, currentjumpforce), ForceMode2D.Impulse);
-                Debug.Log("jumped");
             }
         }
         if (jumpkey)
@@ -51,7 +50,7 @@ public abstract class TwoDPlayerController : MonoBehaviour
             jmpDuration += Time.deltaTime;
             if (jmpDuration < jumpDuration)
             {
-
+                //Physics.gravity=
             }
             else
             {
@@ -63,7 +62,7 @@ public abstract class TwoDPlayerController : MonoBehaviour
             falling = true;
         }
 
-        ChildClassBehaviour();
+        ChildClassBehaviour(ref tmpMovement);
 
         if (!crouch)
         {
@@ -72,74 +71,44 @@ public abstract class TwoDPlayerController : MonoBehaviour
         else
             rigidbody.velocity = Vector2.zero;
     }
+
     protected void Update()
     {
         UpdateAnimator();
-        AttackInput();
     }
-
+    /*
     public void OnGroundCheck()
     {
         if ( OnGroundCheck )
         {
 
         }
-    }
+    }*/
 
-    public abstract void ChildClassBehaviour();
-   
+    public abstract void ChildClassBehaviour(ref Vector3 tmpMovement);
+    public abstract void Damage(AttackDescriptor damageValue);
     protected void UpdateAnimator()
     {
         animator.SetBool("Crouch", crouch);
         animator.SetBool("OnGround", onGround);
         animator.SetBool("Falling", falling);
         animator.SetFloat("Movement", Mathf.Abs(horizontal));
-        animator.SetBool( "Attack1", attack[0] );
-        animator.SetBool( "Attack2", attack[1] );
     }
-
-    protected void   AttackInput()
-    {
-        if( Input.GetButtonDown("Attack1"+playerNumber.ToString() ) )
-        {
-            attack[0] = true;
-            attackTimer[0] = 0;
-        }
-        if( attack[0])
-        {
-            attackTimer[0] += Time.deltaTime;
-            if (attackTimer[0] > attackRate )
-            {
-                attack[0] = false;
-                attackTimer[0] = 0;
-            }
-        }
-        if (Input.GetButtonDown("Attack2" + playerNumber.ToString()))
-        {
-            attack[1] = true;
-            attackTimer[1] = 0;
-        }
-        if (attack[1])
-        {
-            attackTimer[1] += Time.deltaTime;
-            if (attackTimer[1] > attackRate)
-            {
-                attack[1] = false;
-                attackTimer[1] = 0;
-            }
-        }
-    }
-
+    
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if( col.collider.tag =="Ground")
+        if (col.collider.tag == "Ground")
         {
             onGround = true;
             currentjumpforce = jumpforceValue;
             jmpDuration = 0f;
             falling = false;
         }
+
     }
+
+ 
+
     private void OnCollisionExit2D(Collision2D col)
     {
         if (col.collider.tag == "Ground")
